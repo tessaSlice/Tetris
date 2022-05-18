@@ -3,16 +3,16 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
 
-public class Stick extends Block implements Constants {
-	//represents top left coordinate, long skinny one
+public class SBlock extends Block implements Constants {
+    //posx and posy represents top left coordinate
 	
-	public Stick(Game g) {
+	public SBlock(Game g) {
         super(g);
-        // starts out as a vertical line
-		coordinates.add(new Point(posx, posy));
-		coordinates.add(new Point(posx, posy+BLOCK_SIZE));
-		coordinates.add(new Point(posx, posy+2*BLOCK_SIZE));
-		coordinates.add(new Point(posx, posy+3*BLOCK_SIZE));
+		//for now... blocks usually start in the middle of the game's width screen
+		coordinates.add(new Point(posx+BLOCK_SIZE, posy));
+        coordinates.add(new Point(posx+2*BLOCK_SIZE, posy));
+        coordinates.add(new Point(posx, posy+BLOCK_SIZE));
+        coordinates.add(new Point(posx+BLOCK_SIZE, posy+BLOCK_SIZE));
 	}
 	
 	public void rotateCCW() {
@@ -37,7 +37,7 @@ public class Stick extends Block implements Constants {
 	
 	public void draw(Graphics g) {
 		//draw the element here
-		g.setColor(Color.CYAN);
+        g.setColor(Color.YELLOW);
 		for (int i = 0; i < coordinates.size(); i++) {
 			g.fillRect(coordinates.get(i).x, coordinates.get(i).y, BLOCK_SIZE-1, BLOCK_SIZE-1);
 		}

@@ -8,13 +8,11 @@ public class Game implements Constants {
 	public int coordX; 
 	public int coordY;
 	public ArrayList<Block> blocks;
-	public BlockInfo[][] elements;
 	
 	public Game(int x, int y) {
 		coordX = x;
 		coordY = y;
 		blocks = new ArrayList<Block>();
-		elements = new BlockInfo[10][20];
 	}
 	
 	public void draw(Graphics g) {
@@ -23,7 +21,7 @@ public class Game implements Constants {
 		for (int i = 0; i < blocks.size(); i++) {
 			blocks.get(i).draw(g);
 		}
-        // use elements array instead
+        // use elements array instead, nah it shouldn't be that bad rn
         // for (int r = 0; r < elements.length; r++) {
         //     for (int c = 0; c < elements[r].length; c++) {
         //         if (elements[r][c] != null) {
