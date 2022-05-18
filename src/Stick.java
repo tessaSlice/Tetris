@@ -8,6 +8,7 @@ public class Stick extends Block implements Constants {
 	
 	public Stick(Game g) {
         super(g);
+        rotationPoint = new Point(posx, posy+2*BLOCK_SIZE);
         // starts out as a vertical line
 		coordinates.add(new Point(posx, posy));
 		coordinates.add(new Point(posx, posy+BLOCK_SIZE));
@@ -15,8 +16,9 @@ public class Stick extends Block implements Constants {
 		coordinates.add(new Point(posx, posy+3*BLOCK_SIZE));
 	}
 	
-	public void rotateCCW() {
+	public void rotateCCW(Game game) {
 		//rotates counter clockwise
+		super.rotateCCW(game);
 	}
 	
 	public void rotateCW() {

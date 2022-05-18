@@ -8,6 +8,7 @@ public class SBlock extends Block implements Constants {
 	
 	public SBlock(Game g) {
         super(g);
+        rotationPoint = new Point(posx+3*BLOCK_SIZE/2, posy+3*BLOCK_SIZE/2);
 		//for now... blocks usually start in the middle of the game's width screen
 		coordinates.add(new Point(posx+BLOCK_SIZE, posy));
         coordinates.add(new Point(posx+2*BLOCK_SIZE, posy));
@@ -15,8 +16,9 @@ public class SBlock extends Block implements Constants {
         coordinates.add(new Point(posx+BLOCK_SIZE, posy+BLOCK_SIZE));
 	}
 	
-	public void rotateCCW() {
+	public void rotateCCW(Game game) {
 		//rotates counter clockwise
+		super.rotateCCW(game);
 	}
 	
 	public void rotateCW() {

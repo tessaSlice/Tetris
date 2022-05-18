@@ -46,13 +46,13 @@ public class Visual implements ActionListener, KeyListener, Constants {
     {
         //Initialize all data members here...
     	game = new Game(SCREEN_WIDE/12, SCREEN_HIGH/10); //indicates the top left coordinates of the game screen
-        game.blocks.add(new Stick(game));
-        game.blocks.add(new LBlock(game));
-        game.blocks.add(new L2Block(game));
-        game.blocks.add(new SBlock(game));
+//        game.blocks.add(new Stick(game));
+//        game.blocks.add(new LBlock(game));
+//        game.blocks.add(new L2Block(game));
+//        game.blocks.add(new SBlock(game));
         game.blocks.add(new ZBlock(game));
-        game.blocks.add(new Square(game));
-        game.blocks.add(new Pyramid(game));
+//        game.blocks.add(new Square(game));
+//        game.blocks.add(new Pyramid(game));
     }
     public void actionPerformed(ActionEvent e)
     {    
@@ -69,6 +69,11 @@ public class Visual implements ActionListener, KeyListener, Constants {
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
             System.exit(0); 
         
+        if(e.getKeyCode() == KeyEvent.VK_A) {
+        	for (int i = 0; i < game.blocks.size(); i++) {
+        		game.blocks.get(i).rotateCCW(game);
+        	}
+        }
     }
     
     public void keyTyped(KeyEvent e) {  }   //not used
