@@ -17,6 +17,7 @@ public abstract class Block implements Constants {
 	
 	public void rotateCCW() {
 		//rotates counter clockwise
+        // look into rotation matrix!!!
 	}
 	
 	public void rotateCW() {
