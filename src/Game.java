@@ -23,5 +23,13 @@ public class Game implements Constants {
 		for (int i = 0; i < blocks.size(); i++) {
 			blocks.get(i).draw(g);
 		}
+        // use elements array instead
+        // for (int r = 0; r < elements.length; r++) {
+        //     for (int c = 0; c < elements[r].length; c++) {
+        //         if (elements[r][c] != null) {
+        //             elements[r][c].draw(g);
+        //         }
+        //     }
+        // }
 	}
 }

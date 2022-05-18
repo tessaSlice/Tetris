@@ -47,6 +47,8 @@ public class Visual implements ActionListener, KeyListener, Constants {
         //Initialize all data members here...
     	game = new Game(SCREEN_WIDE/12, SCREEN_HIGH/10); //indicates the top left coordinates of the game screen
         game.blocks.add(new Stick(game));
+        // update the elements too when adding the Stick
+        game.elements[0][0] = new BlockInfo(game.blocks.get(0).posx-BLOCK_SIZE, game.blocks.get(0).posy-BLOCK_SIZE);
     }
     public void actionPerformed(ActionEvent e)
     {    
