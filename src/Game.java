@@ -15,23 +15,62 @@ public class Game implements Constants {
 		blocks = new ArrayList<Block>();
 	}
 	
+	public void update() {
+		//reset alive block status
+		Block temp;
+		boolean isFirst = true;
+		for (int i = 0; i < blocks.size(); i++) {
+			temp = blocks.get(i);
+			if (temp.finished) {
+				temp.aliveBlock = false;
+				blocks.set(i, temp);
+			} else if (isFirst) {
+				if (temp.aliveBlock) return; // if it's still the first alive element then don't do anything
+				temp.aliveBlock = true;
+				//update the coordinates too... gah!
+				for (int j = 0; j < 7; j++) {
+					temp.shiftDown(this);
+				}
+				//for now... blocks usually start in the middle of the game's width screen
+				blocks.set(i, temp);
+				isFirst = false;
+			} else {
+				temp.aliveBlock = false;
+				blocks.set(i, temp);
+			}
+		}
+//		add another block if there's no more aliveBlocks
+		int aliveCount = 0;
+		for (Block b : blocks) {
+			if (!b.finished) aliveCount++;
+		}
+		if (aliveCount < 5) {
+			temp = new Block(this);
+			int rand = (int) (Math.random() * 7);
+			if (rand == 0) {
+				temp = new Stick(this);
+			} else if (rand == 1) {
+				temp = new LBlock(this);
+			} else if (rand == 2) {
+				temp = new L2Block(this);
+			} else if (rand == 3) {
+				temp = new Pyramid(this);
+			} else if (rand == 4) {
+				temp = new SBlock(this);
+			} else if (rand == 5) {
+				temp = new Square(this);
+			} else if (rand == 6) {
+				temp = new ZBlock(this);
+			}
+			blocks.add(temp);
+		}
+	}
+	
 	public void draw(Graphics g) {
 		g.setColor(Color.GRAY);
 		g.fillRect(coordX, coordY, WIDE, HIGH);
-		int midX = coordX + WIDE/2;
-		int midY = coordY + HIGH/2;
-		g.setColor(Color.RED);
-		g.drawOval(midX, midY, 10, 10);
 		for (int i = 0; i < blocks.size(); i++) {
 			blocks.get(i).draw(g);
 		}
-        // use elements array instead, nah it shouldn't be that bad rn
-        // for (int r = 0; r < elements.length; r++) {
-        //     for (int c = 0; c < elements[r].length; c++) {
-        //         if (elements[r][c] != null) {
-        //             elements[r][c].draw(g);
-        //         }
-        //     }
-        // }
 	}
 }

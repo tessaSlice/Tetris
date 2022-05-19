@@ -50,14 +50,14 @@ public class Visual implements ActionListener, KeyListener, Constants {
 //        game.blocks.add(new LBlock(game));
 //        game.blocks.add(new L2Block(game));
 //        game.blocks.add(new SBlock(game));
-        game.blocks.add(new ZBlock(game));
+//        game.blocks.add(new ZBlock(game));
 //        game.blocks.add(new Square(game));
 //        game.blocks.add(new Pyramid(game));
     }
     public void actionPerformed(ActionEvent e)
     {    
         //Once the new Visual() is launched, this method runs an infinite loop
-        
+        game.update();
         panel.repaint();
     }
  
@@ -71,7 +71,33 @@ public class Visual implements ActionListener, KeyListener, Constants {
         
         if(e.getKeyCode() == KeyEvent.VK_A) {
         	for (int i = 0; i < game.blocks.size(); i++) {
-        		game.blocks.get(i).rotateCCW(game);
+        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
+            		game.blocks.get(i).rotateCCW(game);
+        		}
+        	}
+        }
+        
+        if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+        	for (int i = 0; i < game.blocks.size(); i++) {
+        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
+            		game.blocks.get(i).shiftLeft(game);
+        		}
+        	}
+        }
+        
+        if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        	for (int i = 0; i < game.blocks.size(); i++) {
+        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
+            		game.blocks.get(i).shiftRight(game);
+        		}
+        	}
+        }
+        
+        if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+        	for (int i = 0; i < game.blocks.size(); i++) {
+        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
+            		game.blocks.get(i).shiftDown(game);
+        		}
         	}
         }
     }

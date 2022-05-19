@@ -43,7 +43,5 @@ public class Square extends Block implements Constants {
 		for (int i = 0; i < coordinates.size(); i++) {
 			g.fillRect(coordinates.get(i).x, coordinates.get(i).y, BLOCK_SIZE-1, BLOCK_SIZE-1);
 		}
-		g.setColor(Color.RED);
-		g.fillOval((int)rotationPoint.getX()-BLOCK_SIZE, (int)rotationPoint.getY()-BLOCK_SIZE, BLOCK_SIZE*2, BLOCK_SIZE*2);
 	}
 }
