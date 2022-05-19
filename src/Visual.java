@@ -19,6 +19,7 @@ public class Visual implements ActionListener, KeyListener, Constants {
     
     //All other public data members go here:
     public Game game;
+    public int ticker; //as a placeholder for the delay to shift down one
     
     public Visual()
     {
@@ -46,18 +47,22 @@ public class Visual implements ActionListener, KeyListener, Constants {
     {
         //Initialize all data members here...
     	game = new Game(SCREEN_WIDE/12, SCREEN_HIGH/10); //indicates the top left coordinates of the game screen
-//        game.blocks.add(new Stick(game));
-//        game.blocks.add(new LBlock(game));
-//        game.blocks.add(new L2Block(game));
-//        game.blocks.add(new SBlock(game));
-//        game.blocks.add(new ZBlock(game));
-//        game.blocks.add(new Square(game));
-//        game.blocks.add(new Pyramid(game));
+    	ticker = 0;
     }
     public void actionPerformed(ActionEvent e)
     {    
         //Once the new Visual() is launched, this method runs an infinite loop
         game.update();
+        ticker++;
+        if (ticker > 20) { //should be one second for every shift down
+        	for (int i = 0; i < game.blocks.size(); i++) {
+        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
+            		game.blocks.get(i).shiftDown(game);
+        		}
+        	}
+        	ticker -= 50;
+        }
+        
         panel.repaint();
     }
  
@@ -89,14 +94,6 @@ public class Visual implements ActionListener, KeyListener, Constants {
         	for (int i = 0; i < game.blocks.size(); i++) {
         		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
             		game.blocks.get(i).shiftRight(game);
-        		}
-        	}
-        }
-        
-        if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-        	for (int i = 0; i < game.blocks.size(); i++) {
-        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
-            		game.blocks.get(i).shiftDown(game);
         		}
         	}
         }

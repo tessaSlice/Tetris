@@ -9,11 +9,16 @@ public class Game implements Constants {
 	public int coordX; 
 	public int coordY;
 	public ArrayList<Block> blocks;
+	public int score; //using original nintendo scoring system because I'm lazy
+	public int level;
 	
 	public Game(int x, int y) {
 		coordX = x;
 		coordY = y;
 		blocks = new ArrayList<Block>();
+		
+		score = 0;
+		level = 0;
 	}
 	
 	public void update() {
@@ -24,7 +29,7 @@ public class Game implements Constants {
 			if (blocks.get(i).finished) { //prevent the ones that haven't been loaded up yet from getting triggered
 				for (int j = 0; j < blocks.get(i).coordinates.size(); j++) {
 					//determine which index of the rowCount array the coordinate goes into
-					rowCount[(int) ((blocks.get(i).coordinates.get(j).getY() - this.coordY)/(BLOCK_SIZE))] += 1;
+					rowCount[(int) ((blocks.get(i).coordinates.get(j).getY() - this.coordY)/(BLOCK_SIZE))] += 1; //can use this to immediately call the ending of the game!!!
 				}	
 			}
 		}
@@ -33,8 +38,8 @@ public class Game implements Constants {
 				//it's filled up an entire row
 				//start removing coordinates specific to that row
 				int targetCoord = i*BLOCK_SIZE+coordY;
-				for (int j = 0; j < blocks.size(); j++) {
-					for (int k = 0; k < blocks.get(j).coordinates.size(); k++) {
+				for (int j = blocks.size() -1; j >= 0; j--) {
+					for (int k = blocks.get(j).coordinates.size() - 1; k >= 0; k--) {
 						if (blocks.get(j).coordinates.get(k).getY() == targetCoord) {
 							blocks.get(j).coordinates.remove(k);
 						}
@@ -44,7 +49,7 @@ public class Game implements Constants {
 				for (int j = 0; j < blocks.size(); j++) {
 					for (int k = 0; k < blocks.get(j).coordinates.size(); k++) {
 						if (blocks.get(j).coordinates.get(k).getY() < targetCoord) {
-							blocks.get(j).coordinates.set(k, new Point((int)(blocks.get(j).coordinates.get(k).getX()), (int) blocks.get(j).coordinates.get(k).getX() + BLOCK_SIZE));
+							blocks.get(j).coordinates.set(k, new Point((int)(blocks.get(j).coordinates.get(k).getX()), (int) blocks.get(j).coordinates.get(k).getY() + BLOCK_SIZE));
 						}
 					}
 				}
