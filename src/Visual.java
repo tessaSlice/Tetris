@@ -1,5 +1,6 @@
 import java.awt.Color; 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent; 
@@ -54,7 +55,7 @@ public class Visual implements ActionListener, KeyListener, Constants {
         //Once the new Visual() is launched, this method runs an infinite loop
         game.update();
         ticker++;
-        if (ticker > 20) { //should be one second for every shift down
+        if (ticker > 5) { //should be one second for every shift down
         	for (int i = 0; i < game.blocks.size(); i++) {
         		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
             		game.blocks.get(i).shiftDown(game);
@@ -123,6 +124,10 @@ public class Visual implements ActionListener, KeyListener, Constants {
             
             //this is where you draw items on the screen.  
             game.draw(g);
+            g.setFont(new Font("TimesRoman", Font.PLAIN, 30));
+            g.setColor(Color.MAGENTA);
+            g.drawString("Current level: " + game.level, SCREEN_WIDE/2, SCREEN_HIGH/2);
+            g.drawString("Current score: " + game.score, SCREEN_WIDE/2, SCREEN_HIGH/2 + 50);
         }
     }
 }

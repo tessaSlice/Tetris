@@ -22,6 +22,8 @@ public class Game implements Constants {
 	}
 	
 	public void update() {
+		level = score / 10000; //arbitrary number I picked ngl
+		int rowsRemoved = 0;
 		//check to see if there's a full row of blocks
 		int[] rowCount = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //counts the number of coordinates there are in every row
 		for (int i = 0; i < blocks.size(); i++) {
@@ -35,6 +37,7 @@ public class Game implements Constants {
 		}
 		for (int i = 0; i < rowCount.length; i++) {
 			if (rowCount[i] == 10) {
+				rowsRemoved++;
 				//it's filled up an entire row
 				//start removing coordinates specific to that row
 				int targetCoord = i*BLOCK_SIZE+coordY;
@@ -55,6 +58,10 @@ public class Game implements Constants {
 				}
 			}
 		}
+		if (rowsRemoved == 1) score += 40 * (1+level); //scoring system
+		else if (rowsRemoved == 2) score += 100 * (1+level);
+		else if (rowsRemoved == 3) score += 300 * (1+level);
+		else if (rowsRemoved == 4) score += 1200 * (1+level);
 		
 		Block temp1 = new Block(this);
 		//check if the current aliveBlock can't move anymore... then aliveBlock = false;
