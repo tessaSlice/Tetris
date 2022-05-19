@@ -16,27 +16,6 @@ public class LBlock extends Block implements Constants {
         coordinates.add(new Point(posx + BLOCK_SIZE, posy+2*BLOCK_SIZE));
 	}
 	
-	public void rotateCCW(Game game) {
-		//rotates counter clockwise
-		super.rotateCCW(game);
-	}
-	
-	public void rotateCW() {
-		//rotates clockwise
-	}
-	
-	public void shiftLeft() {
-		//moves to the left once
-	}
-	
-	public void shiftRight() {
-		//moves to the right once
-	}
-	
-	public void hardDrop() {
-		//immediately drops down onto the game screen
-	}
-	
 	public void draw(Graphics g) {
 		//draw the element here
         g.setColor(Color.GREEN);
