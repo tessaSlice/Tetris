@@ -19,9 +19,11 @@ public class Visual implements ActionListener, KeyListener, Constants {
     private Timer visualtime;   //REQUIRED! Runs/Refreshes the screen. 
     
     //All other public data members go here:
-    public Game game;
+    public Game[] games;
     public int ticker; //as a placeholder for the delay to shift down one
     public int delay;
+    
+    public NeuralNetwork[] brains;
     
     public Visual()
     {
@@ -48,27 +50,62 @@ public class Visual implements ActionListener, KeyListener, Constants {
     public void Initialize()
     {
         //Initialize all data members here...
-    	game = new Game(SCREEN_WIDE/12, SCREEN_HIGH/10); //indicates the top left coordinates of the game screen
+    	games = new Game[3];
+    	games[0] = new Game(SCREEN_WIDE/12, SCREEN_HIGH/10); //indicates the top left coordinates of the game screen
+    	games[1] = new Game(SCREEN_WIDE/12 + WIDE + OFFSET, SCREEN_HIGH/10);
+    	games[2] = new Game(SCREEN_WIDE/12 + 2*WIDE + 2*OFFSET, SCREEN_HIGH/10);
     	ticker = 0;
     	delay = 1;
+    	brains = new NeuralNetwork[3];
+    	brains[0] = new NeuralNetwork(13, 6, 4, 5);
+    	brains[1] = new NeuralNetwork(13, 6, 4, 5);
+    	brains[2] = new NeuralNetwork(13, 6, 4, 5);
     }
     
     public void actionPerformed(ActionEvent e)
     {    
+    	//check if all games have ended...
+    	boolean allGameOver = true;
+    	for (int i = 0; i < 3; i++) {
+    		if (!games[i].over) allGameOver = false;
+    	}
+    	if (allGameOver) {
+    		//here I should technically recreate three new games with improved neural networks
+    			//step 1: determine the best performing neural network and just plant that in
+    		NeuralNetwork first = games[0].brain;
+    		double greatestLifetime = 0;
+    		for (int i = 1; i < 3; i++) {
+    			if (games[i].lifeTime > greatestLifetime) {
+    				greatestLifetime = games[i].lifeTime;
+    				first = games[i].brain;
+    			}
+    		}
+    		//if I implemented the code correct above, it found the index of the greatestLifetime and then set the index's brain to first
+    		games[0] = new Game(SCREEN_WIDE/12, SCREEN_HIGH/10, first.copy()); //indicates the top left coordinates of the game screen
+        	games[1] = new Game(SCREEN_WIDE/12 + WIDE + OFFSET, SCREEN_HIGH/10, first.mutatedcopy());
+        	games[2] = new Game(SCREEN_WIDE/12 + 2*WIDE + 2*OFFSET, SCREEN_HIGH/10, first.mutatedcopy());
+        	delay = 0;
+    	}
     	//Once the new Visual() is launched, this method runs an infinite loop
     	if (delay < DELAY_THRESHOLD*2) delay++;
     	if (delay >= DELAY_THRESHOLD*2) {
-    		game.performML();
+    		for (int i = 0; i < 3; i++) {
+        		games[i].performML();
+    		}
     	}
-    	game.update();
+    	for (int i = 0; i < 3; i++) {
+    		games[i].update();
+		}
         
         ticker++;
         if (ticker > DELAY_THRESHOLD) { //should be one second for every shift down
-        	for (int i = 0; i < game.blocks.size(); i++) {
-        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
-            		game.blocks.get(i).shiftDown(game);
-        		}
-        	}
+        	for (int a = 0; a < 3; a++) {
+        		for (int i = 0; i < games[a].blocks.size(); i++) {
+            		if (games[a].blocks.get(i).aliveBlock && !games[a].blocks.get(i).finished) {
+                		games[a].blocks.get(i).shiftDown(games[a]);
+            		}
+            	}
+    		}
         	ticker -= DELAY_THRESHOLD;
         }
         
@@ -84,35 +121,43 @@ public class Visual implements ActionListener, KeyListener, Constants {
             System.exit(0); 
         
         if(e.getKeyCode() == KeyEvent.VK_A) {
-        	for (int i = 0; i < game.blocks.size(); i++) {
-        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
-            		game.blocks.get(i).rotateCCW(game);
-        		}
-        	}
+        	for (int a = 0; a < 3; a++) {
+        		for (int i = 0; i < games[a].blocks.size(); i++) {
+            		if (games[a].blocks.get(i).aliveBlock && !games[a].blocks.get(i).finished) {
+                		games[a].blocks.get(i).rotateCCW(games[a]);
+            		}
+            	}
+    		}
         }
         
         if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-        	for (int i = 0; i < game.blocks.size(); i++) {
-        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
-            		game.blocks.get(i).shiftLeft(game);
-        		}
-        	}
+        	for (int a = 0; a < 3; a++) {
+        		for (int i = 0; i < games[a].blocks.size(); i++) {
+            		if (games[a].blocks.get(i).aliveBlock && !games[a].blocks.get(i).finished) {
+                		games[a].blocks.get(i).shiftLeft(games[a]);
+            		}
+            	}
+    		}
         }
         
         if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-        	for (int i = 0; i < game.blocks.size(); i++) {
-        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
-            		game.blocks.get(i).shiftRight(game);
-        		}
-        	}
+        	for (int a = 0; a < 3; a++) {
+        		for (int i = 0; i < games[a].blocks.size(); i++) {
+            		if (games[a].blocks.get(i).aliveBlock && !games[a].blocks.get(i).finished) {
+                		games[a].blocks.get(i).shiftRight(games[a]);
+            		}
+            	}
+    		}
         }
         
         if(e.getKeyCode() == KeyEvent.VK_S) {
-        	for (int i = 0; i < game.blocks.size(); i++) {
-        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
-            		game.blocks.get(i).hardDrop(game);
-        		}
-        	}
+        	for (int a = 0; a < 3; a++) {
+        		for (int i = 0; i < games[a].blocks.size(); i++) {
+            		if (games[a].blocks.get(i).aliveBlock && !games[a].blocks.get(i).finished) {
+                		games[a].blocks.get(i).hardDrop(games[a]);
+            		}
+            	}
+    		}
         }
     }
     
@@ -139,11 +184,13 @@ public class Visual implements ActionListener, KeyListener, Constants {
             panel.setBackground(Color.black);
             
             //this is where you draw items on the screen.  
-            game.draw(g);
-            g.setFont(new Font("TimesRoman", Font.PLAIN, 30));
-            g.setColor(Color.MAGENTA);
-            g.drawString("Current level: " + game.level, game.coordX+WIDE+50, game.coordY);
-            g.drawString("Current score: " + game.score, game.coordX+WIDE+50, game.coordY+50);
+            for (int a = 0; a < 3; a++) {
+                games[a].draw(g);
+                g.setFont(new Font("TimesRoman", Font.PLAIN, 30));
+                g.setColor(Color.MAGENTA);
+                g.drawString("Current level: " + games[a].level, games[a].coordX, games[a].coordY + HIGH + 100);
+                g.drawString("Current score: " + games[a].score, games[a].coordX, games[a].coordY + HIGH + 150);
+            }
         }
     }
 }

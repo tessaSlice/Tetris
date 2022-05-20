@@ -7,6 +7,7 @@ public interface Constants {
     //Game settings
     public static final int WIDE = SCREEN_WIDE/6;
     public static final int HIGH = WIDE*2;
+    public static final int OFFSET = 30;
     
     //Block settings
     public static final int BLOCK_SIZE = WIDE/10;

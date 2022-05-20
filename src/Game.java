@@ -18,6 +18,7 @@ public class Game implements Constants {
 	public NeuralNetwork brain;
 	public double[] senses;
 	public int[] columnHeights; //should show the highest (technically lowest) y value in each column
+	public double lifeTime; //to measure competence of neural network, reward for surviving longer
 	
 	public Game(int x, int y) {
 		coordX = x;
@@ -26,6 +27,7 @@ public class Game implements Constants {
 		
 		score = 0;
 		level = 0;
+		over = false;
 		
 		//NN part
 		brain = new NeuralNetwork(13, 6, 4, 5); //could change to 6 later on if I want to implement hold function
@@ -33,6 +35,25 @@ public class Game implements Constants {
 		for (int i = 0; i < 10; i++) {
 			columnHeights[i] = 0;
 		}
+		lifeTime = 0;
+	}
+	
+	public Game(int x, int y, NeuralNetwork b) {
+		coordX = x;
+		coordY = y;
+		blocks = new ArrayList<Block>();
+		
+		score = 0;
+		level = 0;
+		over = false;
+		
+		//NN part
+		brain = b; //could change to 6 later on if I want to implement hold function
+		columnHeights = new int[10];
+		for (int i = 0; i < 10; i++) {
+			columnHeights[i] = 0;
+		}
+		lifeTime = 0;
 	}
 	
 	public void update() {
@@ -152,6 +173,7 @@ public class Game implements Constants {
 	public void performML() {
 		if (over) return;
 		//do ML part first
+		lifeTime += .5; //for surviving another update
 		double[] senses = new double[13];
 		//get the highest y coordinate of each column
 		for (int i = 0; i < blocks.size(); i++) {
