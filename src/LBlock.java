@@ -8,6 +8,7 @@ public class LBlock extends Block implements Constants {
 	
 	public LBlock(Game g) {
         super(g);
+        type = 3;
         rotationPoint = new Point(posx+BLOCK_SIZE/2, posy+3*BLOCK_SIZE/2);
 		//for now... blocks usually start in the middle of the game's width screen
 		coordinates.add(new Point(posx, posy));

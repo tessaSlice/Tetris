@@ -14,6 +14,11 @@ public class Game implements Constants {
 	public int level;
 	public boolean over;
 	
+	//neural network parts
+	public NeuralNetwork brain;
+	public double[] senses;
+	public int[] columnHeights; //should show the highest (technically lowest) y value in each column
+	
 	public Game(int x, int y) {
 		coordX = x;
 		coordY = y;
@@ -21,9 +26,18 @@ public class Game implements Constants {
 		
 		score = 0;
 		level = 0;
+		
+		//NN part
+		brain = new NeuralNetwork(13, 6, 4, 5); //could change to 6 later on if I want to implement hold function
+		columnHeights = new int[10];
+		for (int i = 0; i < 10; i++) {
+			columnHeights[i] = 0;
+		}
 	}
 	
 	public void update() {
+		if (over) return;
+		
 		level = score / 10000; //arbitrary number I picked ngl
 		int rowsRemoved = 0;
 		//check to see if there's a full row of blocks
@@ -83,6 +97,7 @@ public class Game implements Constants {
 				blocks.set(i, temp1);
 			}
 		}
+		
 		//reset alive block status
 		Block temp;
 		boolean isFirst = true;
@@ -106,6 +121,7 @@ public class Game implements Constants {
 				blocks.set(i, temp);
 			}
 		}
+		
 //		add another block if there's no more aliveBlocks
 		int aliveCount = 0;
 		for (Block b : blocks) {
@@ -133,6 +149,64 @@ public class Game implements Constants {
 		}
 	}
 	
+	public void performML() {
+		if (over) return;
+		//do ML part first
+		double[] senses = new double[13];
+		//get the highest y coordinate of each column
+		for (int i = 0; i < blocks.size(); i++) {
+			for (int j = 0; j < blocks.get(i).coordinates.size(); j++) {
+				if (blocks.get(i).finished) {
+					int index = (int) ((blocks.get(i).coordinates.get(j).getX() - this.coordX)/(BLOCK_SIZE));
+					if (columnHeights[index] < blocks.get(i).coordinates.get(j).getY()) {
+						columnHeights[index] = (int) blocks.get(i).coordinates.get(j).getY(); //update the index so it's the greatest
+					}
+				}
+			}
+		}
+		for (int i = 0; i < 10; i++) {
+			senses[i] = columnHeights[i]; 
+		}
+		Block tempB = new Block(this);
+		for (int i = 0; i < blocks.size(); i++) {
+			if (blocks.get(i).aliveBlock) tempB = blocks.get(i);
+		}
+		senses[10] = tempB.type;
+		senses[11] = tempB.rotationPoint.getX();
+		senses[12] = tempB.rotationPoint.getY();
+		
+		double[] thoughts = brain.makeGuess(senses);
+		
+		//find the biggest value in thoughts
+		int responses = greatestValue(thoughts);
+		
+		if (responses == 1) { //move left
+			for (int i = 0; i < blocks.size(); i++) {
+        		if (blocks.get(i).aliveBlock && !blocks.get(i).finished) {
+            		blocks.get(i).shiftLeft(this);
+        		}
+        	}
+		} else if (responses == 2) { //shift right
+			for (int i = 0; i < blocks.size(); i++) {
+        		if (blocks.get(i).aliveBlock && !blocks.get(i).finished) {
+            		blocks.get(i).shiftRight(this);
+        		}
+        	}
+		} else if (responses == 3) { //drop down
+			for (int i = 0; i < blocks.size(); i++) {
+        		if (blocks.get(i).aliveBlock && !blocks.get(i).finished) {
+            		blocks.get(i).hardDrop(this);
+        		}
+        	}
+		} else if (responses == 4) { //rotate CCW
+			for (int i = 0; i < blocks.size(); i++) {
+        		if (blocks.get(i).aliveBlock && !blocks.get(i).finished) {
+            		blocks.get(i).rotateCCW(this);
+        		}
+        	}
+		} //else do nothing
+	}
+	
 	public void draw(Graphics g) {
 		g.setColor(Color.GRAY);
 		g.fillRect(coordX, coordY, WIDE, HIGH);
@@ -149,5 +223,18 @@ public class Game implements Constants {
             g.setColor(Color.MAGENTA);
 			g.drawString("GAME OVER", coordX+BLOCK_SIZE/2, coordY + HIGH/2);
 		}
+	}
+	
+	public int greatestValue(double[] thoughts) {
+		double greatestValue = 0;
+		for (int i = 0; i < thoughts.length; i++) {
+			if (thoughts[i] > greatestValue) greatestValue = thoughts[i];
+		}
+		//locate the index and return it
+		int index = 0;
+		for (int i = 0; i < thoughts.length; i++) {
+			if (thoughts[i] == greatestValue) index = i;
+		}
+		return index;
 	}
 }

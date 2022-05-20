@@ -8,6 +8,7 @@ public class Square extends Block implements Constants {
 	
 	public Square(Game g) {
         super(g);
+        type = -1;
         rotationPoint = new Point(posx+BLOCK_SIZE, posy+BLOCK_SIZE);
 		//for now... blocks usually start in the middle of the game's width screen
 		coordinates.add(new Point(posx, posy));

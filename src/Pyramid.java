@@ -8,6 +8,7 @@ public class Pyramid extends Block implements Constants {
 	
 	public Pyramid(Game g) {
         super(g);
+        type = 1;
         rotationPoint = new Point(posx+3*BLOCK_SIZE/2, posy+3*BLOCK_SIZE/2);
 		//for now... blocks usually start in the middle of the game's width screen
 		coordinates.add(new Point(posx, posy+BLOCK_SIZE));

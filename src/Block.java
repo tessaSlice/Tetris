@@ -10,6 +10,7 @@ public class Block implements Constants {
 	public Point rotationPoint;
 	public boolean aliveBlock;
 	public boolean finished;
+	public int type; 
 	
 	public Block(Game g) {
 		posx = g.coordX+WIDE/2; //blocks usually start in the middle of the game's screen

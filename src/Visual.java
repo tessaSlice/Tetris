@@ -21,6 +21,7 @@ public class Visual implements ActionListener, KeyListener, Constants {
     //All other public data members go here:
     public Game game;
     public int ticker; //as a placeholder for the delay to shift down one
+    public int delay;
     
     public Visual()
     {
@@ -49,12 +50,18 @@ public class Visual implements ActionListener, KeyListener, Constants {
         //Initialize all data members here...
     	game = new Game(SCREEN_WIDE/12, SCREEN_HIGH/10); //indicates the top left coordinates of the game screen
     	ticker = 0;
+    	delay = 1;
     }
     
     public void actionPerformed(ActionEvent e)
     {    
-        //Once the new Visual() is launched, this method runs an infinite loop
-        game.update();
+    	//Once the new Visual() is launched, this method runs an infinite loop
+    	if (delay < DELAY_THRESHOLD*2) delay++;
+    	if (delay >= DELAY_THRESHOLD*2) {
+    		game.performML();
+    	}
+    	game.update();
+        
         ticker++;
         if (ticker > DELAY_THRESHOLD) { //should be one second for every shift down
         	for (int i = 0; i < game.blocks.size(); i++) {

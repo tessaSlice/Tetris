@@ -13,4 +13,8 @@ public interface Constants {
     
     //Visual settings
     public static final int DELAY_THRESHOLD = 15;
+    
+    //Matrix settings
+    public static final double MUTATERATE = .075;
+    public static final double MUTATEVALUE = 42;
 }

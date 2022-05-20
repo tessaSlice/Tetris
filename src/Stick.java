@@ -8,6 +8,7 @@ public class Stick extends Block implements Constants {
 	
 	public Stick(Game g) {
         super(g);
+        type = 0;
         rotationPoint = new Point(posx, posy+2*BLOCK_SIZE);
         // starts out as a vertical line
 		coordinates.add(new Point(posx, posy));
