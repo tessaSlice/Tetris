@@ -108,8 +108,13 @@ public class Block implements Constants {
 		return true;
 	}
 	
-	public void hardDrop() {
+	public void hardDrop(Game game) {
 		//immediately drops down onto the game screen
+		boolean done = false;
+		while (!done) {
+			done = shiftDown(game);
+			done = !done;
+		}
 	}
 	
 	public void draw(Graphics g) {

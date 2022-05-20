@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ public class Game implements Constants {
 	public ArrayList<Block> blocks;
 	public int score; //using original nintendo scoring system because I'm lazy
 	public int level;
+	public boolean over;
 	
 	public Game(int x, int y) {
 		coordX = x;
@@ -31,7 +33,9 @@ public class Game implements Constants {
 			if (blocks.get(i).finished) { //prevent the ones that haven't been loaded up yet from getting triggered
 				for (int j = 0; j < blocks.get(i).coordinates.size(); j++) {
 					//determine which index of the rowCount array the coordinate goes into
-					rowCount[(int) ((blocks.get(i).coordinates.get(j).getY() - this.coordY)/(BLOCK_SIZE))] += 1; //can use this to immediately call the ending of the game!!!
+					int index = (int) ((blocks.get(i).coordinates.get(j).getY() - this.coordY)/(BLOCK_SIZE));
+					if (index < 0 || index > 19) over = true; //can use this to immediately call the ending of the game!!!
+					else rowCount[index] += 1; 
 				}	
 			}
 		}
@@ -51,7 +55,7 @@ public class Game implements Constants {
 				//also have to move every single coordinate that's above that row have to shift it down by BLOCK_SIZE
 				for (int j = 0; j < blocks.size(); j++) {
 					for (int k = 0; k < blocks.get(j).coordinates.size(); k++) {
-						if (blocks.get(j).coordinates.get(k).getY() < targetCoord) {
+						if (blocks.get(j).coordinates.get(k).getY() < targetCoord && blocks.get(j).finished) { //has to be finished or else blocks that aren't will have shifted downwards but their rotationPoint won't have
 							blocks.get(j).coordinates.set(k, new Point((int)(blocks.get(j).coordinates.get(k).getX()), (int) blocks.get(j).coordinates.get(k).getY() + BLOCK_SIZE));
 						}
 					}
@@ -62,6 +66,11 @@ public class Game implements Constants {
 		else if (rowsRemoved == 2) score += 100 * (1+level);
 		else if (rowsRemoved == 3) score += 300 * (1+level);
 		else if (rowsRemoved == 4) score += 1200 * (1+level);
+		
+		//also just check if all of the coordinates of a block have been removed... then remove the block
+		for (int i = blocks.size() - 1; i >= 0; i--) {
+			if (blocks.get(i).coordinates.size() == 0) blocks.remove(i);
+		}
 		
 		Block temp1 = new Block(this);
 		//check if the current aliveBlock can't move anymore... then aliveBlock = false;
@@ -102,7 +111,7 @@ public class Game implements Constants {
 		for (Block b : blocks) {
 			if (!b.finished) aliveCount++;
 		}
-		if (aliveCount < 5) {
+		if (aliveCount < 5 && !over) { //check to make sure the game isn't over first before adding stuff
 			temp = new Block(this);
 			int rand = (int) (Math.random() * 7);
 			if (rand == 0) {
@@ -127,8 +136,18 @@ public class Game implements Constants {
 	public void draw(Graphics g) {
 		g.setColor(Color.GRAY);
 		g.fillRect(coordX, coordY, WIDE, HIGH);
-		for (int i = 0; i < blocks.size(); i++) {
-			blocks.get(i).draw(g);
+		if (!over) {
+			for (int i = 0; i < blocks.size(); i++) {
+				blocks.get(i).draw(g);
+			}	
+		} else {
+			//game over
+			for (int i = blocks.size()-1; i >= 0; i--) {
+				blocks.remove(i);
+			}
+			g.setFont(new Font("TimesRoman", Font.PLAIN, 30));
+            g.setColor(Color.MAGENTA);
+			g.drawString("GAME OVER", coordX+BLOCK_SIZE/2, coordY + HIGH/2);
 		}
 	}
 }

@@ -25,7 +25,7 @@ public class Visual implements ActionListener, KeyListener, Constants {
     public Visual()
     {
         //Adjust the name, but leave everything else alone.
-        frame = new JFrame("Tetris");
+        frame = new JFrame("Bootleg Tetris");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         panel = new DrawingPanel();
         panel.setPreferredSize(new Dimension(SCREEN_WIDE, SCREEN_HIGH));
@@ -50,18 +50,19 @@ public class Visual implements ActionListener, KeyListener, Constants {
     	game = new Game(SCREEN_WIDE/12, SCREEN_HIGH/10); //indicates the top left coordinates of the game screen
     	ticker = 0;
     }
+    
     public void actionPerformed(ActionEvent e)
     {    
         //Once the new Visual() is launched, this method runs an infinite loop
         game.update();
         ticker++;
-        if (ticker > 5) { //should be one second for every shift down
+        if (ticker > DELAY_THRESHOLD) { //should be one second for every shift down
         	for (int i = 0; i < game.blocks.size(); i++) {
         		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
             		game.blocks.get(i).shiftDown(game);
         		}
         	}
-        	ticker -= 50;
+        	ticker -= DELAY_THRESHOLD;
         }
         
         panel.repaint();
@@ -98,6 +99,14 @@ public class Visual implements ActionListener, KeyListener, Constants {
         		}
         	}
         }
+        
+        if(e.getKeyCode() == KeyEvent.VK_S) {
+        	for (int i = 0; i < game.blocks.size(); i++) {
+        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
+            		game.blocks.get(i).hardDrop(game);
+        		}
+        	}
+        }
     }
     
     public void keyTyped(KeyEvent e) {  }   //not used
@@ -126,8 +135,8 @@ public class Visual implements ActionListener, KeyListener, Constants {
             game.draw(g);
             g.setFont(new Font("TimesRoman", Font.PLAIN, 30));
             g.setColor(Color.MAGENTA);
-            g.drawString("Current level: " + game.level, SCREEN_WIDE/2, SCREEN_HIGH/2);
-            g.drawString("Current score: " + game.score, SCREEN_WIDE/2, SCREEN_HIGH/2 + 50);
+            g.drawString("Current level: " + game.level, game.coordX+WIDE+50, game.coordY);
+            g.drawString("Current score: " + game.score, game.coordX+WIDE+50, game.coordY+50);
         }
     }
 }
