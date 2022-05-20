@@ -10,4 +10,7 @@ public interface Constants {
     
     //Block settings
     public static final int BLOCK_SIZE = WIDE/10;
+    
+    //Visual settings
+    public static final int DELAY_THRESHOLD = 15;
 }

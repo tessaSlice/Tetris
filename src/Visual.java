@@ -1,5 +1,6 @@
 import java.awt.Color; 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent; 
@@ -19,11 +20,12 @@ public class Visual implements ActionListener, KeyListener, Constants {
     
     //All other public data members go here:
     public Game game;
+    public int ticker; //as a placeholder for the delay to shift down one
     
     public Visual()
     {
         //Adjust the name, but leave everything else alone.
-        frame = new JFrame("Tetris");
+        frame = new JFrame("Bootleg Tetris");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         panel = new DrawingPanel();
         panel.setPreferredSize(new Dimension(SCREEN_WIDE, SCREEN_HIGH));
@@ -46,13 +48,22 @@ public class Visual implements ActionListener, KeyListener, Constants {
     {
         //Initialize all data members here...
     	game = new Game(SCREEN_WIDE/12, SCREEN_HIGH/10); //indicates the top left coordinates of the game screen
-        game.blocks.add(new Stick(game));
-        // update the elements too when adding the Stick
-        game.elements[0][0] = new BlockInfo(game.blocks.get(0).posx-BLOCK_SIZE, game.blocks.get(0).posy-BLOCK_SIZE);
+    	ticker = 0;
     }
+    
     public void actionPerformed(ActionEvent e)
     {    
         //Once the new Visual() is launched, this method runs an infinite loop
+        game.update();
+        ticker++;
+        if (ticker > DELAY_THRESHOLD) { //should be one second for every shift down
+        	for (int i = 0; i < game.blocks.size(); i++) {
+        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
+            		game.blocks.get(i).shiftDown(game);
+        		}
+        	}
+        	ticker -= DELAY_THRESHOLD;
+        }
         
         panel.repaint();
     }
@@ -65,6 +76,37 @@ public class Visual implements ActionListener, KeyListener, Constants {
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
             System.exit(0); 
         
+        if(e.getKeyCode() == KeyEvent.VK_A) {
+        	for (int i = 0; i < game.blocks.size(); i++) {
+        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
+            		game.blocks.get(i).rotateCCW(game);
+        		}
+        	}
+        }
+        
+        if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+        	for (int i = 0; i < game.blocks.size(); i++) {
+        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
+            		game.blocks.get(i).shiftLeft(game);
+        		}
+        	}
+        }
+        
+        if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        	for (int i = 0; i < game.blocks.size(); i++) {
+        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
+            		game.blocks.get(i).shiftRight(game);
+        		}
+        	}
+        }
+        
+        if(e.getKeyCode() == KeyEvent.VK_S) {
+        	for (int i = 0; i < game.blocks.size(); i++) {
+        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
+            		game.blocks.get(i).hardDrop(game);
+        		}
+        	}
+        }
     }
     
     public void keyTyped(KeyEvent e) {  }   //not used
@@ -91,6 +133,10 @@ public class Visual implements ActionListener, KeyListener, Constants {
             
             //this is where you draw items on the screen.  
             game.draw(g);
+            g.setFont(new Font("TimesRoman", Font.PLAIN, 30));
+            g.setColor(Color.MAGENTA);
+            g.drawString("Current level: " + game.level, game.coordX+WIDE+50, game.coordY);
+            g.drawString("Current score: " + game.score, game.coordX+WIDE+50, game.coordY+50);
         }
     }
 }
