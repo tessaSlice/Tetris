@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ public class Block implements Constants {
 	public Point rotationPoint;
 	public boolean aliveBlock;
 	public boolean finished;
+	public int held; //should only be allowed to hold 1 time
 	public int type; 
 	
 	public Block(Game g) {
@@ -18,6 +20,7 @@ public class Block implements Constants {
 		coordinates = new ArrayList<Point>();
 		aliveBlock = false;
 		finished = false;
+		held = 0;
 	}
 	
 	public boolean rotateCCW(Game game) {
@@ -118,8 +121,63 @@ public class Block implements Constants {
 		}
 	}
 	
+	public void hold(Game game) {
+		if (this.held != 0) return; //can't just spam repeat holds... can only hold once per block
+		//check if any previous blocks were currently held
+		boolean previousHeld = false;
+		int index = 0;
+		for (int i = 0; i < game.blocks.size(); i++) {
+			if (game.blocks.get(i).held != 0 && !game.blocks.get(i).finished) { //it's been held
+				index = i;
+				previousHeld = true;
+			}
+		}
+		//if there was none previously held, just add it
+		held++;
+		aliveBlock = false; //why tf is this not working?
+		posx = game.coordX+WIDE/2;
+		posy = game.coordY-7*BLOCK_SIZE; //should not have changed a single thing...
+		//reset coordinates based on posy and posx gah! has to make it block specific too!
+		this.resetCoordinates();
+		
+		if (!previousHeld) {
+			//have to find next block and set it to aliveBlock
+			Block temp1;
+			boolean isFirst = true;
+			for (int i = 0; i < game.blocks.size(); i++) {
+				temp1 = game.blocks.get(i);
+				if (isFirst && !temp1.finished && temp1.held == 0) {
+					//update the coordinates too... gah!
+					temp1.posx = game.coordX+WIDE/2; //blocks usually start in the middle of the game's screen
+					temp1.posy = game.coordY;
+					temp1.resetCoordinates();
+					temp1.aliveBlock = true;
+					temp1.held++;
+					//for now... blocks usually start in the middle of the game's width screen
+					game.blocks.set(i, temp1);
+					isFirst = false;
+					return;
+				}
+			}
+		} 
+		if (previousHeld) { //if there was one previously held, switch it over
+			//this == current aliveBlock
+			Block temp1 = game.blocks.get(index);
+			temp1.posx = game.coordX+WIDE/2;
+			temp1.posy = game.coordY;
+			//reset the coordinates gah!
+			temp1.resetCoordinates();
+			temp1.aliveBlock = true;
+			game.blocks.set(index, temp1);
+		}
+	}
+	
 	public void draw(Graphics g) {
-		//draw the element here
+		//draw the element here -- update this later so that I can just modify everything in this file
+	}
+	
+	public void resetCoordinates() {
+		//should only use posx and posy values
 	}
 	
 	public boolean intersectsOtherBlock(Game game, int condition) {

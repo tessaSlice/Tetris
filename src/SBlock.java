@@ -24,4 +24,14 @@ public class SBlock extends Block implements Constants {
 			g.fillRect(coordinates.get(i).x, coordinates.get(i).y, BLOCK_SIZE-1, BLOCK_SIZE-1);
 		}
 	}
+	
+	public void resetCoordinates() {
+		rotationPoint = new Point(posx+3*BLOCK_SIZE/2, posy+3*BLOCK_SIZE/2);
+		//for now... blocks usually start in the middle of the game's width screen
+		coordinates.clear();
+		coordinates.add(new Point(posx+BLOCK_SIZE, posy));
+        coordinates.add(new Point(posx+2*BLOCK_SIZE, posy));
+        coordinates.add(new Point(posx, posy+BLOCK_SIZE));
+        coordinates.add(new Point(posx+BLOCK_SIZE, posy+BLOCK_SIZE));
+	}
 }

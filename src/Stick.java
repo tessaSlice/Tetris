@@ -24,4 +24,14 @@ public class Stick extends Block implements Constants {
 			g.fillRect(coordinates.get(i).x, coordinates.get(i).y, BLOCK_SIZE-1, BLOCK_SIZE-1);
 		}
 	}
+	
+	public void resetCoordinates() {
+		rotationPoint = new Point(posx, posy+2*BLOCK_SIZE);
+        // starts out as a vertical line
+		coordinates.clear();
+		coordinates.add(new Point(posx, posy));
+		coordinates.add(new Point(posx, posy+BLOCK_SIZE));
+		coordinates.add(new Point(posx, posy+2*BLOCK_SIZE));
+		coordinates.add(new Point(posx, posy+3*BLOCK_SIZE));
+	}
 }

@@ -15,9 +15,9 @@ public class Game implements Constants {
 	public boolean over;
 	
 	//neural network parts
-	public NeuralNetwork brain;
-	public double[] senses;
-	public int[] columnHeights; //should show the highest (technically lowest) y value in each column
+//	public NeuralNetwork brain;
+//	public double[] senses;
+//	public int[] columnHeights; //should show the highest (technically lowest) y value in each column
 	
 	public Game(int x, int y) {
 		coordX = x;
@@ -28,11 +28,11 @@ public class Game implements Constants {
 		level = 0;
 		
 		//NN part
-		brain = new NeuralNetwork(13, 6, 4, 5); //could change to 6 later on if I want to implement hold function
-		columnHeights = new int[10];
-		for (int i = 0; i < 10; i++) {
-			columnHeights[i] = 0;
-		}
+//		brain = new NeuralNetwork(13, 6, 4, 5); //could change to 6 later on if I want to implement hold function
+//		columnHeights = new int[10];
+//		for (int i = 0; i < 10; i++) {
+//			columnHeights[i] = 0;
+//		}
 	}
 	
 	public void update() {
@@ -98,7 +98,6 @@ public class Game implements Constants {
 			}
 		}
 		
-		//reset alive block status
 		Block temp;
 		boolean isFirst = true;
 		for (int i = 0; i < blocks.size(); i++) {
@@ -106,13 +105,18 @@ public class Game implements Constants {
 			if (temp.finished) {
 				temp.aliveBlock = false;
 				blocks.set(i, temp);
+			} else if (temp.held != 0 && !temp.aliveBlock) { //currently the piece being held
+				//reset the hold position since it's not working too well in the Block class
+				temp.posx = coordX+WIDE/2; //blocks usually start in the middle of the game's screen
+				temp.posy = coordY-7*BLOCK_SIZE;
+				temp.resetCoordinates();
 			} else if (isFirst) {
-				if (temp.aliveBlock) return; // if it's still the first alive element then don't do anything
+				if (temp.aliveBlock) return; //if it's still the first alive element then don't do anything
 				temp.aliveBlock = true;
+				temp1.posx = coordX+WIDE/2; //blocks usually start in the middle of the game's screen
+				temp1.posy = coordY;
 				//update the coordinates too... gah!
-				for (int j = 0; j < 7; j++) {
-					temp.shiftDown(this);
-				}
+				temp1.resetCoordinates();
 				//for now... blocks usually start in the middle of the game's width screen
 				blocks.set(i, temp);
 				isFirst = false;
@@ -121,8 +125,8 @@ public class Game implements Constants {
 				blocks.set(i, temp);
 			}
 		}
-		
-//		add another block if there's no more aliveBlocks
+
+//		add another block if there's no more blocks left in the array that are still in queue
 		int aliveCount = 0;
 		for (Block b : blocks) {
 			if (!b.finished) aliveCount++;
@@ -149,63 +153,63 @@ public class Game implements Constants {
 		}
 	}
 	
-	public void performML() {
-		if (over) return;
-		//do ML part first
-		double[] senses = new double[13];
-		//get the highest y coordinate of each column
-		for (int i = 0; i < blocks.size(); i++) {
-			for (int j = 0; j < blocks.get(i).coordinates.size(); j++) {
-				if (blocks.get(i).finished) {
-					int index = (int) ((blocks.get(i).coordinates.get(j).getX() - this.coordX)/(BLOCK_SIZE));
-					if (columnHeights[index] < blocks.get(i).coordinates.get(j).getY()) {
-						columnHeights[index] = (int) blocks.get(i).coordinates.get(j).getY(); //update the index so it's the greatest
-					}
-				}
-			}
-		}
-		for (int i = 0; i < 10; i++) {
-			senses[i] = columnHeights[i]; 
-		}
-		Block tempB = new Block(this);
-		for (int i = 0; i < blocks.size(); i++) {
-			if (blocks.get(i).aliveBlock) tempB = blocks.get(i);
-		}
-		senses[10] = tempB.type;
-		senses[11] = tempB.rotationPoint.getX();
-		senses[12] = tempB.rotationPoint.getY();
-		
-		double[] thoughts = brain.makeGuess(senses);
-		
-		//find the biggest value in thoughts
-		int responses = greatestValue(thoughts);
-		
-		if (responses == 1) { //move left
-			for (int i = 0; i < blocks.size(); i++) {
-        		if (blocks.get(i).aliveBlock && !blocks.get(i).finished) {
-            		blocks.get(i).shiftLeft(this);
-        		}
-        	}
-		} else if (responses == 2) { //shift right
-			for (int i = 0; i < blocks.size(); i++) {
-        		if (blocks.get(i).aliveBlock && !blocks.get(i).finished) {
-            		blocks.get(i).shiftRight(this);
-        		}
-        	}
-		} else if (responses == 3) { //drop down
-			for (int i = 0; i < blocks.size(); i++) {
-        		if (blocks.get(i).aliveBlock && !blocks.get(i).finished) {
-            		blocks.get(i).hardDrop(this);
-        		}
-        	}
-		} else if (responses == 4) { //rotate CCW
-			for (int i = 0; i < blocks.size(); i++) {
-        		if (blocks.get(i).aliveBlock && !blocks.get(i).finished) {
-            		blocks.get(i).rotateCCW(this);
-        		}
-        	}
-		} //else do nothing
-	}
+//	public void performML() {
+//		if (over) return;
+//		//do ML part first
+//		double[] senses = new double[13];
+//		//get the highest y coordinate of each column
+//		for (int i = 0; i < blocks.size(); i++) {
+//			for (int j = 0; j < blocks.get(i).coordinates.size(); j++) {
+//				if (blocks.get(i).finished) {
+//					int index = (int) ((blocks.get(i).coordinates.get(j).getX() - this.coordX)/(BLOCK_SIZE));
+//					if (columnHeights[index] < blocks.get(i).coordinates.get(j).getY()) {
+//						columnHeights[index] = (int) blocks.get(i).coordinates.get(j).getY(); //update the index so it's the greatest
+//					}
+//				}
+//			}
+//		}
+//		for (int i = 0; i < 10; i++) {
+//			senses[i] = columnHeights[i]; 
+//		}
+//		Block tempB = new Block(this);
+//		for (int i = 0; i < blocks.size(); i++) {
+//			if (blocks.get(i).aliveBlock) tempB = blocks.get(i);
+//		}
+//		senses[10] = tempB.type;
+//		senses[11] = tempB.rotationPoint.getX();
+//		senses[12] = tempB.rotationPoint.getY();
+//		
+//		double[] thoughts = brain.makeGuess(senses);
+//		
+//		//find the biggest value in thoughts
+//		int responses = greatestValue(thoughts);
+//		
+//		if (responses == 1) { //move left
+//			for (int i = 0; i < blocks.size(); i++) {
+//        		if (blocks.get(i).aliveBlock && !blocks.get(i).finished) {
+//            		blocks.get(i).shiftLeft(this);
+//        		}
+//        	}
+//		} else if (responses == 2) { //shift right
+//			for (int i = 0; i < blocks.size(); i++) {
+//        		if (blocks.get(i).aliveBlock && !blocks.get(i).finished) {
+//            		blocks.get(i).shiftRight(this);
+//        		}
+//        	}
+//		} else if (responses == 3) { //drop down
+//			for (int i = 0; i < blocks.size(); i++) {
+//        		if (blocks.get(i).aliveBlock && !blocks.get(i).finished) {
+//            		blocks.get(i).hardDrop(this);
+//        		}
+//        	}
+//		} else if (responses == 4) { //rotate CCW
+//			for (int i = 0; i < blocks.size(); i++) {
+//        		if (blocks.get(i).aliveBlock && !blocks.get(i).finished) {
+//            		blocks.get(i).rotateCCW(this);
+//        		}
+//        	}
+//		} //else do nothing
+//	}
 	
 	public void draw(Graphics g) {
 		g.setColor(Color.GRAY);

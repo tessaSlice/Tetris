@@ -57,9 +57,9 @@ public class Visual implements ActionListener, KeyListener, Constants {
     {    
     	//Once the new Visual() is launched, this method runs an infinite loop
     	if (delay < DELAY_THRESHOLD*2) delay++;
-    	if (delay >= DELAY_THRESHOLD*2) {
-    		game.performML();
-    	}
+//    	if (delay >= DELAY_THRESHOLD*2) {
+//    		game.performML();
+//    	}
     	game.update();
         
         ticker++;
@@ -67,7 +67,8 @@ public class Visual implements ActionListener, KeyListener, Constants {
         	for (int i = 0; i < game.blocks.size(); i++) {
         		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
             		game.blocks.get(i).shiftDown(game);
-        		}
+//            		game.blocks.get(i).hold(game); //temporary thing... REMOVE THIS
+        		}	
         	}
         	ticker -= DELAY_THRESHOLD;
         }
@@ -111,6 +112,15 @@ public class Visual implements ActionListener, KeyListener, Constants {
         	for (int i = 0; i < game.blocks.size(); i++) {
         		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
             		game.blocks.get(i).hardDrop(game);
+        		}
+        	}
+        }
+        
+        if(e.getKeyCode() == KeyEvent.VK_Q) {
+        	for (int i = 0; i < game.blocks.size(); i++) {
+        		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
+            		game.blocks.get(i).hold(game);
+            		return; // or else it'll immediately hop onto the next one
         		}
         	}
         }
