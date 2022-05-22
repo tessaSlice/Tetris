@@ -12,11 +12,11 @@ public class Block implements Constants {
 	public boolean aliveBlock;
 	public boolean finished;
 	public int held; //should only be allowed to hold 1 time
-	public int type; 
+	public int type;
 	
 	public Block(Game g) {
 		posx = g.coordX+WIDE/2; //blocks usually start in the middle of the game's screen
-		posy = g.coordY-7*BLOCK_SIZE;
+		posy = g.coordY-8*BLOCK_SIZE;
 		coordinates = new ArrayList<Point>();
 		aliveBlock = false;
 		finished = false;
@@ -135,8 +135,8 @@ public class Block implements Constants {
 		//if there was none previously held, just add it
 		held++;
 		aliveBlock = false; //why tf is this not working?
-		posx = game.coordX+WIDE/2;
-		posy = game.coordY-7*BLOCK_SIZE; //should not have changed a single thing...
+		posx = game.coordX;
+		posy = game.coordY+HIGH+50; //temporary guess
 		//reset coordinates based on posy and posx gah! has to make it block specific too!
 		this.resetCoordinates();
 		
@@ -173,7 +173,11 @@ public class Block implements Constants {
 	}
 	
 	public void draw(Graphics g) {
-		//draw the element here -- update this later so that I can just modify everything in this file
+		//draw the element here
+		g.setColor(BLOCK_COLORS[type+3]);
+		for (int i = 0; i < coordinates.size(); i++) {
+			g.fillRect(coordinates.get(i).x, coordinates.get(i).y, BLOCK_SIZE-1, BLOCK_SIZE-1);
+		}
 	}
 	
 	public void resetCoordinates() {
@@ -181,7 +185,7 @@ public class Block implements Constants {
 	}
 	
 	public boolean intersectsOtherBlock(Game game, int condition) {
-		//condition == 1 for left, condition == 2 for right, condition == 0 for down, condition == 3 for CCW
+		//condition == 1 for left, condition == 2 for right, condition == 0 for down, condition == 3 for CCW, condition == 4 if it's literally in the same location
 		boolean doesIntersect = false;
 		for (int i = 0; i < game.blocks.size(); i++) {
 			//for every coordinate for every block... compare it with the current block
@@ -190,13 +194,13 @@ public class Block implements Constants {
 					for (int k = 0; k < this.coordinates.size(); k++) {
 						if (condition == 1) {
 							//for checking leftwards
-							if (game.blocks.get(i).coordinates.get(j).getX() == (this.coordinates.get(k).getX()) - BLOCK_SIZE && game.blocks.get(i).coordinates.get(j).getY() == (this.coordinates.get(k).getY())) doesIntersect = true; 
+							if (game.blocks.get(i).finished && game.blocks.get(i).coordinates.get(j).getX() == (this.coordinates.get(k).getX()) - BLOCK_SIZE && game.blocks.get(i).coordinates.get(j).getY() == (this.coordinates.get(k).getY())) doesIntersect = true; 
 						} else if (condition == 2) {
-							if (game.blocks.get(i).coordinates.get(j).getX() == (this.coordinates.get(k).getX()) + BLOCK_SIZE && game.blocks.get(i).coordinates.get(j).getY() == (this.coordinates.get(k).getY())) doesIntersect = true; 
+							if (game.blocks.get(i).finished && game.blocks.get(i).coordinates.get(j).getX() == (this.coordinates.get(k).getX()) + BLOCK_SIZE && game.blocks.get(i).coordinates.get(j).getY() == (this.coordinates.get(k).getY())) doesIntersect = true; 
 						} else if (condition == 0 ) {
-							// it's just checking downwards
-							if (game.blocks.get(i).coordinates.get(j).getX() == (this.coordinates.get(k).getX()) && game.blocks.get(i).coordinates.get(j).getY() == (this.coordinates.get(k).getY() + BLOCK_SIZE)) doesIntersect = true; 
-						} else { 
+							// it's just checking downwards, has to make sure that the block is on the ground first
+							if (game.blocks.get(i).finished && game.blocks.get(i).coordinates.get(j).getX() == (this.coordinates.get(k).getX()) && game.blocks.get(i).coordinates.get(j).getY() == (this.coordinates.get(k).getY() + BLOCK_SIZE)) doesIntersect = true; 
+						} else if (condition == 3 ){ 
 							//checks for CCW rotation
 							int x = coordinates.get(k).x + BLOCK_SIZE/2; //shift them because they're currently on the top left corner
 							int y = coordinates.get(k).y + BLOCK_SIZE/2; //shift them because they're currently on the top left corner
@@ -213,6 +217,9 @@ public class Block implements Constants {
 							if (newPtX < game.coordX || newPtX > game.coordX+WIDE-BLOCK_SIZE) { //check to see if it also is outside of the left boundary
 								doesIntersect = true; // got kinda lazy, could do a shifting move first and then rotate but then I'll have to check again... gah!
 							}
+						} else {
+							//checks for current location... meant to end the game if it does
+							if (game.blocks.get(i).finished && game.blocks.get(i).coordinates.get(j).getX() == (this.coordinates.get(k).getX()) && game.blocks.get(i).coordinates.get(j).getY() == (this.coordinates.get(k).getY())) doesIntersect = true;
 						}
 					}
 				}

@@ -13,6 +13,7 @@ public class Game implements Constants {
 	public int score; //using original nintendo scoring system because I'm lazy
 	public int level;
 	public boolean over;
+	public ArrayList<Block> bagOfBlocks;
 	
 	//neural network parts
 //	public NeuralNetwork brain;
@@ -26,6 +27,9 @@ public class Game implements Constants {
 		
 		score = 0;
 		level = 0;
+		over = false;
+		bagOfBlocks = new ArrayList<Block>();
+		refillBag();
 		
 		//NN part
 //		brain = new NeuralNetwork(13, 6, 4, 5); //could change to 6 later on if I want to implement hold function
@@ -94,7 +98,7 @@ public class Game implements Constants {
 			if (temp1.aliveBlock && temp1.intersectsOtherBlock(this, 0)) {
 				temp1.aliveBlock = false;
 				temp1.finished = true;
-				blocks.set(i, temp1);
+				if (temp1.intersectsOtherBlock(this, 4)) over = true; //it currently collides with another block
 			}
 		}
 		
@@ -107,16 +111,17 @@ public class Game implements Constants {
 				blocks.set(i, temp);
 			} else if (temp.held != 0 && !temp.aliveBlock) { //currently the piece being held
 				//reset the hold position since it's not working too well in the Block class
-				temp.posx = coordX+WIDE/2; //blocks usually start in the middle of the game's screen
-				temp.posy = coordY-7*BLOCK_SIZE;
+				temp.posx = coordX;
+				temp.posy = coordY+HIGH+50;
 				temp.resetCoordinates();
+			} else if (temp.aliveBlock) { //already found the first block
+				isFirst = false;
 			} else if (isFirst) {
-				if (temp.aliveBlock) return; //if it's still the first alive element then don't do anything
 				temp.aliveBlock = true;
-				temp1.posx = coordX+WIDE/2; //blocks usually start in the middle of the game's screen
-				temp1.posy = coordY;
+				temp.posx = coordX+WIDE/2; //blocks usually start in the middle of the game's screen
+				temp.posy = coordY;
 				//update the coordinates too... gah!
-				temp1.resetCoordinates();
+				temp.resetCoordinates();
 				//for now... blocks usually start in the middle of the game's width screen
 				blocks.set(i, temp);
 				isFirst = false;
@@ -132,26 +137,16 @@ public class Game implements Constants {
 			if (!b.finished) aliveCount++;
 		}
 		if (aliveCount < 5 && !over) { //check to make sure the game isn't over first before adding stuff
+			//per Random Generator Guidelines - https://tetris.fandom.com/wiki/Random_Generator
 			temp = new Block(this);
-			int rand = (int) (Math.random() * 7);
-			if (rand == 0) {
-				temp = new Stick(this);
-			} else if (rand == 1) {
-				temp = new LBlock(this);
-			} else if (rand == 2) {
-				temp = new L2Block(this);
-			} else if (rand == 3) {
-				temp = new Pyramid(this);
-			} else if (rand == 4) {
-				temp = new SBlock(this);
-			} else if (rand == 5) {
-				temp = new Square(this);
-			} else if (rand == 6) {
-				temp = new ZBlock(this);
-			}
+			if (bagOfBlocks.size() == 0) refillBag();
+			int rand = (int) (Math.random() * bagOfBlocks.size());
+			temp = bagOfBlocks.remove(rand);
 			blocks.add(temp);
 		}
 	}
+	
+	
 	
 //	public void performML() {
 //		if (over) return;
@@ -240,5 +235,15 @@ public class Game implements Constants {
 			if (thoughts[i] == greatestValue) index = i;
 		}
 		return index;
+	}
+	
+	public void refillBag() {
+		bagOfBlocks.add(new Stick(this));
+		bagOfBlocks.add(new LBlock(this));
+		bagOfBlocks.add(new L2Block(this));
+		bagOfBlocks.add(new Pyramid(this));
+		bagOfBlocks.add(new SBlock(this));
+		bagOfBlocks.add(new ZBlock(this));
+		bagOfBlocks.add(new Square(this));
 	}
 }

@@ -26,7 +26,7 @@ public class Visual implements ActionListener, KeyListener, Constants {
     public Visual()
     {
         //Adjust the name, but leave everything else alone.
-        frame = new JFrame("Bootleg Tetris");
+        frame = new JFrame("BOOTLEG TETRIS");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         panel = new DrawingPanel();
         panel.setPreferredSize(new Dimension(SCREEN_WIDE, SCREEN_HIGH));
@@ -67,7 +67,6 @@ public class Visual implements ActionListener, KeyListener, Constants {
         	for (int i = 0; i < game.blocks.size(); i++) {
         		if (game.blocks.get(i).aliveBlock && !game.blocks.get(i).finished) {
             		game.blocks.get(i).shiftDown(game);
-//            		game.blocks.get(i).hold(game); //temporary thing... REMOVE THIS
         		}	
         	}
         	ticker -= DELAY_THRESHOLD;

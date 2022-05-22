@@ -17,14 +17,6 @@ public class LBlock extends Block implements Constants {
         coordinates.add(new Point(posx + BLOCK_SIZE, posy+2*BLOCK_SIZE));
 	}
 	
-	public void draw(Graphics g) {
-		//draw the element here
-        g.setColor(Color.GREEN);
-		for (int i = 0; i < coordinates.size(); i++) {
-			g.fillRect(coordinates.get(i).x, coordinates.get(i).y, BLOCK_SIZE-1, BLOCK_SIZE-1);
-		}
-	}
-	
 	public void resetCoordinates() {
 		//should only use posx and posy values
 		rotationPoint = new Point(posx+BLOCK_SIZE/2, posy+3*BLOCK_SIZE/2);

@@ -17,14 +17,6 @@ public class Stick extends Block implements Constants {
 		coordinates.add(new Point(posx, posy+3*BLOCK_SIZE));
 	}
 	
-	public void draw(Graphics g) {
-		//draw the element here
-		g.setColor(Color.CYAN);
-		for (int i = 0; i < coordinates.size(); i++) {
-			g.fillRect(coordinates.get(i).x, coordinates.get(i).y, BLOCK_SIZE-1, BLOCK_SIZE-1);
-		}
-	}
-	
 	public void resetCoordinates() {
 		rotationPoint = new Point(posx, posy+2*BLOCK_SIZE);
         // starts out as a vertical line
