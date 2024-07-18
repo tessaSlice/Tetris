@@ -20,12 +20,17 @@ The following set of instructions will only be useful for developers using WSL (
 
 1. Install JDK
 ```
-sudo apt install openjdk-11-jdk
+sudo apt-get install default-jdk
 ```
 
-This will install java version 11.
+This will install a version of Java. To check what version, you can run:
+```
+java -version
+```
 
 2. Install Java Extension Pack
 
 Install the `Extension Pack for Java` in VSCode. It's an official extension made by Microsoft. 
 
+3. Run the program
+[TODO]
