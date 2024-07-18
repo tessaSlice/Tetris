@@ -50,3 +50,25 @@ Make sure that you're on `Main.java` and then click on the arrow button on the t
 ## Create an executable
 
 This section is just a reference for how I made an executable from this Java project. 
+
+1. Generate a JAR file. 
+
+On the bottom left of the explorer tab in VSCode, there should be a section called `JAVA PROJECTS`. If you hover over that tab, then there should be an icon that allows you to export as a JAR file. 
+
+2. Install `Launch4j`. Here's the official site: https://launch4j.sourceforge.net/. On the left side bar there is a link where you can download the executable. 
+
+3. Set up configurations.
+
+There are two main configurations you have to set up:
+1. Output file: specify the path and name for the output `.exe` file
+2. Jar: specify the JAR file
+
+Optionally, you can specify an icon for the executable by providing an `.ico` file. 
+
+There are plenty of other options to consider too when making the executable file, but those are the main ones that I really considered. 
+
+3. Build the wrapper
+
+Click the `Build wrapper` button. It should resemble a gear. If it gives you an error asking for the config, first save the file (it should be an XML file) and then when it asks you for the config again, provide the config. 
+
+Now you should have an executable file of your Java project!
