@@ -1,3 +1,14 @@
+# How to play
+
+Keybinds:
+A = rotate CCW
+S = drop the tetrimino down
+Q = hold the tetrimino
+
+Use left and right arrow keys to shift the block.
+
+These keybinds are probably not ideal, so if you're interested, I would recommend you look through the file `Visual.java` if you want to modify it. 
+
 # Tetris Installation Options
 
 There are two ways to play this game. There's a simple method and a more complex method that involves more steps and software installed. 
@@ -33,4 +44,9 @@ java -version
 Install the `Extension Pack for Java` in VSCode. It's an official extension made by Microsoft. 
 
 3. Run the program
-[TODO]
+
+Make sure that you're on `Main.java` and then click on the arrow button on the top right. It will compile the code and run the program.
+
+## Create an executable
+
+This section is just a reference for how I made an executable from this Java project. 
